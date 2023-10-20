@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: watsonx-ai-model-adapter
+spec:
+  selector:
+    matchLabels:
+      app: watsonx-ai-model-adapter
+  template:
+    metadata:
+      labels:
+        app: watsonx-ai-model-adapter
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: p114worker04.b2s001.pbm.ihost.com
+      containers:
+      - name: watsonx-ai-model-adapter
+        image: quay.io/ibm/ai-on-power-genai-watsonx-ai-model-adapter@sha256:7420333392fe2b1191e55eccbf9c35b0e91c8f20dfa14e117b4f91073ccf9865
+        resources:
+          requests:
+            memory: "100Gi"
+            cpu: "100"
+          limits:
+            memory: "200Gi"
+            cpu: "128"
+        ports:
+        - name: watsonx-http
+          containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: watsonx-ai-model-adapter
+spec:
+  selector:
+    app: watsonx-ai-model-adapter
+  ports:
+    - name: watsonx-http
+      protocol: TCP
+      port: 8080
+      targetPort: watsonx-http
