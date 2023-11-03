@@ -74,7 +74,7 @@ spec:
         volumeMounts:
         - name: genai-use-case
           mountPath: "/home/jovyan/dsce-sample-apps/selfservice-cust-assist-qna/documents"
-        - name: genai-use-cases-config
+        - name: app-config
           mountPath: "/home/jovyan/dsce-sample-apps/selfservice-cust-assist-qna/app-config.properties"
 ---
 apiVersion: v1
