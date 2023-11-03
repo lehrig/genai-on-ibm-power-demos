@@ -67,7 +67,7 @@ spec:
             path: app-config.properties
       containers:
       - name: selfservice-cust-assist-qn
-        image: quay.io/ibm/ai-on-power-genai-selfservice-cust-assist-qna:v0.0.2
+        image: quay.io/ibm/ai-on-power-genai-selfservice-cust-assist-qna:v0.0.3
         ports:
         - name: selfsvc-http
           containerPort: 8050

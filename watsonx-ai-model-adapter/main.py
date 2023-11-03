@@ -36,16 +36,16 @@ else:
     
 @app.get("/")
 def read_root():
-    return {"Text": "Welcome to the watsonx.ai model adapter for IBM Power! The /text endpoint complies to the watsonx.ai model inferencing API and can serves models to you. See: https://ibm.github.io/watson-machine-learning-sdk/fm_extensions.html"}
+    return {"Text": "Welcome to the watsonx.ai model adapter for IBM Power! The /text endpoint complies to the watsonx.ai model inferencing API and can serve models to you. See: https://ibm.github.io/watson-machine-learning-sdk/fm_extensions.html"}
 
 
 # See: https://github.com/watson-developer-cloud/assistant-toolkit/blob/master/integrations/extensions/starter-kits/language-model-watsonx/watsonx-openapi.json
 @app.post("/ml/v1-beta/generation/text")
 async def create_text(payload: Payload):
     input_ids = tokenizer(payload.input, return_tensors="pt").input_ids
-    max_new_tokens = payload.max_new_tokens
-    min_new_tokens = payload.min_new_tokens
-    repetition_penalty = payload.repetition_penalty
+    max_new_tokens = payload.parameters["max_new_tokens"]
+    min_new_tokens = payload.parameters["min_new_tokens"]
+    repetition_penalty = payload.parameters["repetition_penalty"]
 
     outputs = model.generate(
         input_ids,
