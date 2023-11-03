@@ -62,9 +62,6 @@ spec:
       - name: app-config
         configMap:
           name: genai-use-cases-config
-          items:
-          - key: app-config-properties
-            path: app-config.properties
       containers:
       - name: selfservice-cust-assist-qn
         image: quay.io/ibm/ai-on-power-genai-selfservice-cust-assist-qna:v0.0.2
@@ -75,7 +72,8 @@ spec:
         - name: genai-use-case
           mountPath: "/home/jovyan/dsce-sample-apps/selfservice-cust-assist-qna/documents"
         - name: app-config
-          mountPath: "/home/jovyan/dsce-sample-apps/selfservice-cust-assist-qna"
+          mountPath: "/home/jovyan/dsce-sample-apps/selfservice-cust-assist-qna/app-config.properties"
+          subPath: app-config-properties
 ---
 apiVersion: v1
 kind: Service
