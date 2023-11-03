@@ -1,0 +1,16 @@
+# Conda configuration see https://conda.io/projects/conda/en/latest/configuration.html
+name: aionpower
+auto_update_conda: false
+show_channel_urls: true
+channel_priority: flexible
+channels:
+  - rocketce
+  - https://repo.anaconda.com/pkgs/main
+  - https://repo.anaconda.com/pkgs/r 
+dependencies:
+  - 'conda-forge::tokenizers>=0.13.3,<0.14'
+  - 'conda-forge::uvicorn'
+  - fastapi
+  - 'huggingface::datasets>=2.1.0'
+  - transformers
+  - pytorch-cpu

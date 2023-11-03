@@ -83,12 +83,8 @@ RUN mkdir "/home/${NB_USER}/work" && \
     # Continue with Base...
     rm -rf "/home/${NB_USER}/.cache/yarn" && \
     fix-permissions "${CONDA_DIR}" && \
-    # Create .env file
-    echo "WATSONX_API_KEY=5wy6n8IBRn27vLi1wdmsxFm8krXIm_ywVZqV8MYejYAn" > .env && \
     # Power customization
     sed -i 's/<your watsonx instance project_id>/ibm-power-10/g' payload/q_and_a-payload.json && \
-    sed -i 's/Self-service customer assistant/Self-service customer assistant on IBM Power10/g' app-config.properties && \
-    sed -i 's/https:\/\/us-south\.ml\.cloud\.ibm\.com\/ml\/v1-beta\/generation\/text?version=2023-05-29/http:\/\/watsonx-ai-model-adapter-demos\.apps\.b2s001\.pbm\.ihost\.com\/ml\/v1-beta\/generation\/text/g' app-config.properties && \
     sed -i 's/\/assets\//assets\//g' template.py && \
     fix-permissions "/home/${NB_USER}"
 

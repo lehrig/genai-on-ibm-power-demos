@@ -1,17 +1,17 @@
-FROM quay.io/ibm/kubeflow-notebook-image-ppc64le@sha256:fa6b3a065b14a206895531f99e8aafa1fcaba3def4d000f13dbe9e495c1aad32
+FROM mambaorg/micromamba:latest
 
-RUN mamba install \
-        --yes \
-        'conda-forge::uvicorn'
+WORKDIR /code
 
-COPY start.sh /usr/local/bin/
-COPY --chown="${NB_UID}:${NB_GID}" main.py "${HOME}"
+COPY ./environment.yml /code/environment.yml
 
+RUN micromamba install -y -n base -f environment.yml && \
+    micromamba clean --all --yes
+
+COPY ./main.py /code/main.py
+
+#Support arbitrary user ids: https://docs.openshift.com/container-platform/4.8/openshift_images/create-images.html#images-create-guide-openshift_create-images
 USER root
-RUN fix-permissions /usr/local/bin/ && \
-    chmod +x /usr/local/bin/start.sh
 
-USER ${NB_UID}
-EXPOSE 8080
-ENTRYPOINT ["tini", "-g", "--"]
-CMD ["start.sh"]
+RUN chgrp -R 0 /opt  && chmod -R g=u /opt
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]

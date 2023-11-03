@@ -1,3 +1,10 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: huggingface-token
+stringData:
+  token: hf_YOUR_TOKEN
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,7 +22,15 @@ spec:
         kubernetes.io/hostname: p114worker04.b2s001.pbm.ihost.com
       containers:
       - name: watsonx-ai-model-adapter
-        image: quay.io/ibm/ai-on-power-genai-watsonx-ai-model-adapter@sha256:7420333392fe2b1191e55eccbf9c35b0e91c8f20dfa14e117b4f91073ccf9865
+        image: quay.io/ibm/ai-on-power-genai-watsonx-ai-model-adapter:v0.0.2
+        env:
+        - name: TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: huggingface-token
+              key: token
+        - name: MODEL
+          value: "google/flan-t5-base"
         resources:
           requests:
             memory: "100Gi"

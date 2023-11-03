@@ -1,3 +1,47 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: genai-use-cases-volume
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: nfs-storage-provisioner
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: genai-use-cases-config
+data:
+  app-config-properties: |
+    tabtitle = Customer Q&A
+	navbartitle = Self-service customer assistant on IBM Power10
+
+	layout = vertical
+	input_h_rows = 20
+	input_v_rows = 2
+
+	show_select_doc_btn = true
+	app_locked = False
+
+	sample_text =
+	input_placeholder_text = Ask a question
+	generate_btn_text = Ask
+	select_doc_btn_text = Select source
+	helper_text = Generated output will be displayed
+
+	Input_title=
+	Output_title=
+
+	#For LLM call
+	SERVER_URL = http://watsonx-ai-model-adapter-demos.apps.b2s001.pbm.ihost.com/ml/v1-beta/generation/text
+	# This prompt will be added before user question
+	rag_prompt=Read the following document and answer the following question. If the answer is not in the document then respond "I don't know".
+
+	footer_text=This App is built using watsonx.ai SDK. Please note that this content is made available to foster AI technology adoption. The SDK, watsonx.ai platform and content may include systems & methods pending patent with USPTO and protected under US Patent Laws. Copyright - 2023 IBM Corporation
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -11,12 +55,27 @@ spec:
       labels:
         app: selfservice-cust-assist-qn
     spec:
+      volumes:
+      - name: genai-use-case
+        persistentVolumeClaim:
+          claimName: genai-use-cases-volume
+      - name: app-config
+        configMap:
+          name: genai-use-cases-config
+          items:
+          - key: app-config-properties
+            path: app-config.properties
       containers:
       - name: selfservice-cust-assist-qn
-        image: quay.io/ibm/ai-on-power-genai-selfservice-cust-assist-qna:v0.0.1 
+        image: quay.io/ibm/ai-on-power-genai-selfservice-cust-assist-qna:v0.0.2
         ports:
         - name: selfsvc-http
           containerPort: 8050
+        volumeMounts:
+        - name: genai-use-case
+          mountPath: "/home/jovyan/dsce-sample-apps/selfservice-cust-assist-qna/documents"
+        - name: genai-use-cases-config
+          mountPath: "/home/jovyan/dsce-sample-apps/selfservice-cust-assist-qna/app-config.properties"
 ---
 apiVersion: v1
 kind: Service

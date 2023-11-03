@@ -1,7 +1,9 @@
 from fastapi import FastAPI
+from huggingface_hub import login
+import os
 from pydantic import BaseModel
 import torch
-from transformers import T5Tokenizer, T5ForConditionalGeneration
+from transformers import AutoModelForCausalLM, AutoTokenizer, T5Tokenizer, T5ForConditionalGeneration
 from typing import Any, Dict, Union
 
 app = FastAPI()
@@ -12,11 +14,25 @@ class Payload(BaseModel):
     parameters: Dict[str, Any]
     project_id: str
 
-MODEL = "google/flan-t5-base"
+MODEL = os.getenv('MODEL', "google/flan-t5-base")
+TOKEN = os.getenv('TOKEN', None)
 
-tokenizer = T5Tokenizer.from_pretrained(MODEL)
-model = T5ForConditionalGeneration.from_pretrained(MODEL)
+if TOKEN is not None:
+  login(token=TOKEN)
 
+tokenizer = None
+model = None
+if MODEL=="google/flan-t5-base" or MODEL=="google/flan-t5-xxl":
+  tokenizer = T5Tokenizer.from_pretrained(MODEL)
+  model = T5ForConditionalGeneration.from_pretrained(MODEL)
+elif MODEL=="google/flan-ul2":
+  tokenizer = AutoTokenizer.from_pretrained(MODEL)
+  model = T5ForConditionalGeneration.from_pretrained(MODEL, torch_dtype=torch.bfloat16)
+elif MODEL=="meta-llama/Llama-2-7b-hf" or MODEL=="meta-llama/Llama-2-13b-hf" or MODEL=="meta-llama/Llama-2-70b-hf":
+  tokenizer = AutoTokenizer.from_pretrained(MODEL)
+  model = AutoModelForCausalLM.from_pretrained(MODEL)
+else:
+  raise ValueError(f'Trying to load unsupported model: {MODEL}.')
     
 @app.get("/")
 def read_root():
@@ -27,7 +43,16 @@ def read_root():
 @app.post("/ml/v1-beta/generation/text")
 async def create_text(payload: Payload):
     input_ids = tokenizer(payload.input, return_tensors="pt").input_ids
-    outputs = model.generate(input_ids)
+    max_new_tokens = payload.max_new_tokens
+    min_new_tokens = payload.min_new_tokens
+    repetition_penalty = payload.repetition_penalty
+
+    outputs = model.generate(
+        input_ids,
+        max_new_tokens=max_new_tokens,
+        min_new_tokens=min_new_tokens,
+        repetition_penalty=repetition_penalty,
+    )
 
     generated_text = tokenizer.decode(outputs[0])
     generated_token_count = outputs.shape[1]
