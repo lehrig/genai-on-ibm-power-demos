@@ -14,7 +14,7 @@ ENV HOME="/home/${NB_USER}"
 
 ENV DEBUG_MODE="True"
 ENV SERVICE_PORT=8050
-ENV DASH_URL_BASE_PATHNAME="/selfservice-cust-assist-qn/"
+ENV DASH_URL_BASE_PATHNAME="/brief-builder/"
 
 # Fix: https://github.com/hadolint/hadolint/wiki/DL4006
 # Fix: https://github.com/koalaman/shellcheck/wiki/SC3014
@@ -75,7 +75,7 @@ RUN mkdir "/home/${NB_USER}/work" && \
     rm ./micromamba && \
     # Install remainder via pip...
     git clone https://github.com/IBM/dsce-sample-apps.git ${HOME}/dsce-sample-apps && \
-    cd "${HOME}"/dsce-sample-apps/selfservice-cust-assist-qna && \
+    cd "${HOME}"/dsce-sample-apps/brief-builder && \
     pip3 install -r requirements.txt && \
     # Continue with Base...
     rm -rf "/home/${NB_USER}/.cache/yarn" && \
@@ -83,7 +83,7 @@ RUN mkdir "/home/${NB_USER}/work" && \
     # Create .env file
     echo "WATSONX_API_KEY=5wy6n8IBRn27vLi1wdmsxFm8krXIm_ywVZqV8MYejYAn" > .env && \
     # Power customization
-    sed -i 's/<your watsonx instance project_id>/ibm-power-10/g' payload/q_and_a-payload.json && \
+    sed -i 's/<your watsonx instance project_id>/ibm-power-10/g' payload/content-payload.json && \
     sed -i 's/\/assets\//assets\//g' template.py && \
     fix-permissions "/home/${NB_USER}"
 
@@ -92,4 +92,4 @@ CMD python3 template.py
 # Switch back to jovyan to avoid accidental container runs as root
 USER ${NB_UID}
 
-WORKDIR "${HOME}"/dsce-sample-apps/selfservice-cust-assist-qna
+WORKDIR "${HOME}"/dsce-sample-apps/brief-builder

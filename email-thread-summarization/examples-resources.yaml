@@ -1,0 +1,78 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: email-thread-summarization-config
+data:
+  app-config-properties: |
+    tabtitle = Email summarization
+    navbartitle = Email thread summarization on IBM Power10
+    
+    layout = horizontal
+    input_h_rows = 20
+    input_v_rows = 4
+    
+    show_upload = True
+    app_locked = False
+    
+    sample_text = 
+    input_placeholder_text = To get started, type your own, or upload an email thread from a file by clicking the "Upload file" button.
+    helper_text = Generated output will be displayed here on click of "Get summary" button
+    generate_btn_text = Get summary
+    
+    # Provide actions in sequence. For Custom api call, use action=custom & update customApi.py as per need.
+    generate_btn_actions = llm,llm
+    # Provide title for each output
+    generate_btn_output_labels = Summary,Topic 
+    # Provide payload file name for each action
+    generate_btn_payload_files = summary-payload,classification-payload1
+    # Provide output type for each action
+    generate_btn_output_type = text,label
+    
+    Input_title=Email thread
+    
+    # For LLM call
+    SERVER_URL = http://watsonx-ai-model-adapter-demos.apps.b2s001.pbm.ihost.com/ml/v1-beta/generation/text
+    
+    
+    footer_text=This App is built using watsonx.ai SDK. Please note that this content is made available to foster AI technology adoption. The SDK, watsonx.ai platform and content may include systems & methods pending patent with USPTO and protected under US Patent Laws. Copyright - 2023 IBM Corporation
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: email-thread-summarization
+spec:
+  selector:
+    matchLabels:
+      app: email-thread-summarization
+  template:
+    metadata:
+      labels:
+        app: email-thread-summarization
+    spec:
+      volumes:
+      - name: app-config
+        configMap:
+          name: email-thread-summarization-config
+      containers:
+      - name: email-thread-summarization
+        image: quay.io/ibm/ai-on-power-genai-email-thread-summarization:v0.0.1
+        ports:
+        - name: selfsvc-http
+          containerPort: 8050
+        volumeMounts:
+        - name: app-config
+          mountPath: "/home/jovyan/dsce-sample-apps/email-thread-summarization/app-config.properties"
+          subPath: app-config-properties
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: email-thread-summarization
+spec:
+  selector:
+    app: email-thread-summarization
+  ports:
+    - name: email-thread-summarization
+      protocol: TCP
+      port: 8050
+      targetPort: selfsvc-http

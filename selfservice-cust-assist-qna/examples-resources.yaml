@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: genai-use-cases-volume
+  name: selfservice-cust-assist-qn-volume
 spec:
   accessModes:
   - ReadWriteOnce
@@ -13,7 +13,7 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: genai-use-cases-config
+  name: selfservice-cust-assist-qn-config
 data:
   app-config-properties: |
     tabtitle = Customer Q&A
@@ -56,20 +56,20 @@ spec:
         app: selfservice-cust-assist-qn
     spec:
       volumes:
-      - name: genai-use-case
+      - name: selfservice-cust-assist-qn-vol
         persistentVolumeClaim:
-          claimName: genai-use-cases-volume
+          claimName: selfservice-cust-assist-qn-volume
       - name: app-config
         configMap:
-          name: genai-use-cases-config
+          name: selfservice-cust-assist-qn-config
       containers:
       - name: selfservice-cust-assist-qn
-        image: quay.io/ibm/ai-on-power-genai-selfservice-cust-assist-qna:v0.0.3
+        image: quay.io/ibm/ai-on-power-genai-selfservice-cust-assist-qna:v0.0.4
         ports:
         - name: selfsvc-http
           containerPort: 8050
         volumeMounts:
-        - name: genai-use-case
+        - name: selfservice-cust-assist-qn-vol
           mountPath: "/home/jovyan/dsce-sample-apps/selfservice-cust-assist-qna/documents"
         - name: app-config
           mountPath: "/home/jovyan/dsce-sample-apps/selfservice-cust-assist-qna/app-config.properties"

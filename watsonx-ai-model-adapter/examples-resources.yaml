@@ -3,7 +3,7 @@ kind: Secret
 metadata:
   name: huggingface-token
 stringData:
-  token: hf_YOUR_TOKEN
+  token: $HUGGING_FACE_TOKEN
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -34,10 +34,10 @@ spec:
         resources:
           requests:
             memory: "100Gi"
-            cpu: "100"
+            cpu: "47"
           limits:
             memory: "200Gi"
-            cpu: "128"
+            cpu: "48"
         ports:
         - name: watsonx-http
           containerPort: 8080

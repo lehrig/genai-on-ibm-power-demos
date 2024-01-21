@@ -22,7 +22,10 @@ if TOKEN is not None:
 
 tokenizer = None
 model = None
-if MODEL=="google/flan-t5-base" or MODEL=="google/flan-t5-xxl":
+if MODEL=="ibm/granite-13b-instruct-v2":
+  tokenizer = AutoTokenizer.from_pretrained(MODEL)
+  model = AutoModelForCausalLM.from_pretrained(MODEL)
+elif MODEL=="google/flan-t5-base" or MODEL=="google/flan-t5-xxl":
   tokenizer = T5Tokenizer.from_pretrained(MODEL)
   model = T5ForConditionalGeneration.from_pretrained(MODEL)
 elif MODEL=="google/flan-ul2":

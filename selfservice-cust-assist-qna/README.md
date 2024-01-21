@@ -1,8 +1,14 @@
 # selfservice-cust-assist-qna
 
+### Deploy
+```
+envsubst < examples-resources.yaml | kubectl apply -f -
+```
+
+### Build image
 ```
 IMAGE=quay.io/ibm/ai-on-power-genai-selfservice-cust-assist-qna
-LABEL=v0.0.3
+LABEL=v0.0.4
 TAG=${IMAGE}:${LABEL}
 
 docker buildx build -f Dockerfile -t ${TAG} --push . 
