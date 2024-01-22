@@ -22,7 +22,7 @@ spec:
         kubernetes.io/hostname: p114worker04.b2s001.pbm.ihost.com
       containers:
       - name: watsonx-ai-model-adapter
-        image: quay.io/ibm/ai-on-power-genai-watsonx-ai-model-adapter:v0.0.6
+        image: quay.io/ibm/ai-on-power-genai-watsonx-ai-model-adapter:v0.0.7
         env:
         - name: TOKEN
           valueFrom:

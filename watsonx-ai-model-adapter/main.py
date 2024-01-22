@@ -3,7 +3,7 @@ from huggingface_hub import login
 import os
 from pydantic import BaseModel
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer, StoppingCriteria, T5Tokenizer, T5ForConditionalGeneration
+from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer, StoppingCriteria, T5Tokenizer, T5ForConditionalGeneration
 from typing import Any, Dict, Union
 
 app = FastAPI()
