@@ -25,6 +25,10 @@ model = None
 if MODEL=="ibm/granite-13b-instruct-v2":
   tokenizer = AutoTokenizer.from_pretrained(MODEL)
   model = AutoModelForCausalLM.from_pretrained(MODEL)
+elif MODEL=="ibm/mpt-7b-instruct2":
+  model_config = AutoConfig.from_pretrained(MODEL)
+  tokenizer = AutoTokenizer.from_pretrained(model_config.tokenizer_name)
+  model = AutoModelForCausalLM.from_pretrained(MODEL, config=model_config)
 elif MODEL=="google/flan-t5-base" or MODEL=="google/flan-t5-xxl":
   tokenizer = T5Tokenizer.from_pretrained(MODEL)
   model = T5ForConditionalGeneration.from_pretrained(MODEL)
