@@ -10,7 +10,7 @@ envsubst < examples-resources.yaml | kubectl apply -f -
 ### Build image
 ```
 IMAGE=quay.io/ibm/ai-on-power-genai-watsonx-ai-model-adapter
-LABEL=v0.0.7
+LABEL=v0.0.8
 TAG=${IMAGE}:${LABEL}
 
 docker buildx build -f Dockerfile -t ${TAG} --push . 
