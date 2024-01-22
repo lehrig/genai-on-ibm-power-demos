@@ -4,8 +4,11 @@ WORKDIR /code
 
 COPY ./environment.yml /code/environment.yml
 
+ARG MAMBA_DOCKERFILE_ACTIVATE=1
+
 RUN micromamba install -y -n base -f environment.yml && \
-    micromamba clean --all --yes
+    micromamba clean --all --yes && \
+    pip install --upgrade transformers
 
 COPY ./main.py /code/main.py
 
