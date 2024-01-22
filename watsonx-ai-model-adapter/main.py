@@ -54,7 +54,7 @@ elif MODEL=="ibm/mpt-7b-instruct2":
   model_config = AutoConfig.from_pretrained(MODEL)
   tokenizer = AutoTokenizer.from_pretrained(model_config.tokenizer_name)
   model = AutoModelForCausalLM.from_pretrained(MODEL, config=model_config)
-elif MODEL=="Deci/DeciLM-7B" or "Deci/DeciLM-7B-instruct":
+elif MODEL=="Deci/DeciLM-7B" or MODEL=="Deci/DeciLM-7B-instruct":
   tokenizer = AutoTokenizer.from_pretrained(MODEL)
   model = AutoModelForCausalLM.from_pretrained(MODEL, trust_remote_code=True)
 elif MODEL=="google/flan-t5-base" or MODEL=="google/flan-t5-xxl":
