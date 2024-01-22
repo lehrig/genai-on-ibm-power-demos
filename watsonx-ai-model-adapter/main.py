@@ -63,7 +63,7 @@ elif MODEL=="google/flan-t5-base" or MODEL=="google/flan-t5-xxl":
 elif MODEL=="google/flan-ul2":
   tokenizer = AutoTokenizer.from_pretrained(MODEL)
   model = T5ForConditionalGeneration.from_pretrained(MODEL, torch_dtype=torch.bfloat16)
-elif MODEL=="TinyLlama/TinyLama-1.1B-Chat-v1.0" or MODEL=="meta-llama/Llama-2-7b-hf" or MODEL=="meta-llama/Llama-2-13b-hf" or MODEL=="meta-llama/Llama-2-70b-hf":
+elif MODEL=="TinyLlama/TinyLlama-1.1B-Chat-v1.0" or MODEL=="meta-llama/Llama-2-7b-hf" or MODEL=="meta-llama/Llama-2-13b-hf" or MODEL=="meta-llama/Llama-2-70b-hf":
   tokenizer = AutoTokenizer.from_pretrained(MODEL)
   model = AutoModelForCausalLM.from_pretrained(MODEL)
 else:
