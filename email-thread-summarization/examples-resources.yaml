@@ -31,7 +31,7 @@ data:
     Input_title=Email thread
     
     # For LLM call
-    SERVER_URL = http://watsonx-ai-model-adapter-demos.apps.b2s001.pbm.ihost.com/ml/v1-beta/generation/text
+    SERVER_URL = http://watsonx-ai-model-adapter.$CLUSTER_DOMAIN/ml/v1-beta/generation/text
     
     
     footer_text=This App is built using watsonx.ai SDK. Please note that this content is made available to foster AI technology adoption. The SDK, watsonx.ai platform and content may include systems & methods pending patent with USPTO and protected under US Patent Laws. Copyright - 2023 IBM Corporation
@@ -76,3 +76,17 @@ spec:
       protocol: TCP
       port: 8050
       targetPort: selfsvc-http
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: email-thread-summarization
+spec:
+  host: email-thread-summarization.$CLUSTER_DOMAIN
+  port:
+    targetPort: email-thread-summarization
+  to:
+    kind: Service
+    name: email-thread-summarization
+    weight: 100
+  wildcardPolicy: None

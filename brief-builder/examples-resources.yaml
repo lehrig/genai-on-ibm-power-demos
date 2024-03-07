@@ -31,7 +31,7 @@ data:
     Input_title=Instructions and key points
     
     # For LLM call
-    SERVER_URL = http://watsonx-ai-model-adapter-demos.apps.b2s001.pbm.ihost.com/ml/v1-beta/generation/text
+    SERVER_URL = http://watsonx-ai-model-adapter.$CLUSTER_DOMAIN/ml/v1-beta/generation/text
     
     footer_text=This App is built using watsonx.ai SDK. Please note that this content is made available to foster AI technology adoption. The SDK, watsonx.ai platform and content may include systems & methods pending patent with USPTO and protected under US Patent Laws. Copyright - 2024 IBM Corporation
 ---
@@ -75,3 +75,17 @@ spec:
       protocol: TCP
       port: 8050
       targetPort: selfsvc-http
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: brief-builder
+spec:
+  host: brief-builder.$CLUSTER_DOMAIN
+  port:
+    targetPort: brief-builder
+  to:
+    kind: Service
+    name: brief-builder
+    weight: 100
+  wildcardPolicy: None

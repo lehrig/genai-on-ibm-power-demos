@@ -36,7 +36,7 @@ data:
     Output_title=
 
     #For LLM call
-    SERVER_URL = http://watsonx-ai-model-adapter-demos.apps.b2s001.pbm.ihost.com/ml/v1-beta/generation/text
+    SERVER_URL = http://watsonx-ai-model-adapter.$CLUSTER_DOMAIN/ml/v1-beta/generation/text
     # This prompt will be added before user question
     rag_prompt=Read the following document and answer the following question. If the answer is not in the document then respond "I don't know".
 
@@ -87,3 +87,17 @@ spec:
       protocol: TCP
       port: 8050
       targetPort: selfsvc-http
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: selfservice-cust-assist-qn
+spec:
+  host: selfservice-cust-assist-qn.$CLUSTER_DOMAIN
+  port:
+    targetPort: selfservice-cust-assist-qn
+  to:
+    kind: Service
+    name: selfservice-cust-assist-qn
+    weight: 100
+  wildcardPolicy: None

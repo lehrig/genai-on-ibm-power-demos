@@ -19,7 +19,7 @@ spec:
         app: watsonx-ai-model-adapter
     spec:
       nodeSelector:
-        kubernetes.io/hostname: p114worker04.b2s001.pbm.ihost.com
+        kubernetes.io/hostname: $LLM_NODE
       containers:
       - name: watsonx-ai-model-adapter
         image: quay.io/ibm/ai-on-power-genai-watsonx-ai-model-adapter:v0.0.11
@@ -34,10 +34,7 @@ spec:
         resources:
           requests:
             memory: "100Gi"
-            cpu: "47"
-          limits:
-            memory: "200Gi"
-            cpu: "48"
+            cpu: "$VIRTUAL_CPUS"
         ports:
         - name: watsonx-http
           containerPort: 8080
@@ -54,3 +51,17 @@ spec:
       protocol: TCP
       port: 8080
       targetPort: watsonx-http
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: watsonx-ai-model-adapter
+spec:
+  host: watsonx-ai-model-adapter.$CLUSTER_DOMAIN
+  port:
+    targetPort: watsonx-http
+  to:
+    kind: Service
+    name: watsonx-ai-model-adapter
+    weight: 100
+  wildcardPolicy: None

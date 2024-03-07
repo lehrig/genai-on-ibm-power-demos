@@ -2,6 +2,7 @@
 
 ### Deploy
 ```
+export CLUSTER_DOMAIN=$(oc get ingresses.config/cluster -o jsonpath={.spec.domain})
 envsubst < examples-resources.yaml | kubectl apply -f -
 ```
 
