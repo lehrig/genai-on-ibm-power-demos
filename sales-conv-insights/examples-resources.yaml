@@ -16,7 +16,7 @@ data:
     
     sample_text = 
     input_placeholder_text = To get started, type your own, or upload a conversation from a file by clicking the "Upload file" button.
-helper_text = Generated output will be displayed here on click of "Load insights into ERP" button
+    helper_text = Generated output will be displayed here on click of "Load insights into ERP" button
     generate_btn_text = Load insights into ERP
     
     # Provide actions in sequence. For Custom api call, use action=custom & update customApi.py as per need.

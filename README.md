@@ -26,5 +26,7 @@ export VIRTUAL_CPUS=64
 Goto:
 - http://brief-builder-demos.$CLUSTER_DOMAIN/brief-builder/
 - http://email-thread-summarization.$CLUSTER_DOMAIN/email-thread-summarization/
+- http://pii-extraction.$CLUSTER_DOMAIN/pii-extraction/
+- http://sales-conv-insights.$CLUSTER_DOMAIN/sales-conv-insights/
 - http://selfservice-cust-assist-qn.$CLUSTER_DOMAIN/selfservice-cust-assist-qn/
 

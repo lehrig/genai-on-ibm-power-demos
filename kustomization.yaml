@@ -4,5 +4,7 @@ kind: Kustomization
 resources:
 - brief-builder
 - email-thread-summarization
+- pii-extraction
+- sales-conv-insights
 - selfservice-cust-assist-qna
 - watsonx-ai-model-adapter
