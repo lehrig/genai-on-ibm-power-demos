@@ -1,0 +1,81 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ask-my-data-config
+data:
+  app-config-properties: |
+    WATSONX_API_KEY=<your IBM Cloud API key>
+    WML_SERVER_URL=https://us-south.ml.cloud.ibm.com
+    
+    # True/False. To enable/disable user to allow any file to be uploaded.
+    FILE_LOCK_ENABLED = True
+    
+    # watsonx Assitant configs
+    WAINTEGRATIONID = <your watsonx Assitant integration id>
+    WAREGION = <your watsonx Assitant region>
+    WASERVICEINSTANCEID = <your watsonx Assitant service instance id>
+    
+    # watsonx.ai api server url
+    SERVER_URL = http://watsonx-ai-model-adapter.$CLUSTER_DOMAIN/ml/v1-beta/generation/text
+    
+    # MySQL database connection details
+    DB_HOST = <MySQL server hostname>
+    DB_PORT = <port number>
+    DB_NAME = <database name>
+    DB_USER = <username>
+    DB_PASS = <base64 encoded password>
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ask-my-data
+spec:
+  selector:
+    matchLabels:
+      app: ask-my-data
+  template:
+    metadata:
+      labels:
+        app: ask-my-data
+    spec:
+      volumes:
+      - name: app-config
+        configMap:
+          name: ask-my-data-config
+      containers:
+      - name: ask-my-data
+        image: quay.io/ibm/ai-on-power-genai-ask-my-data:v0.0.1
+        ports:
+        - name: selfsvc-http
+          containerPort: 8050
+        volumeMounts:
+        - name: app-config
+          mountPath: "/home/jovyan/dsce-sample-apps/ask-my-data/.env"
+          subPath: app-config-properties
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ask-my-data
+spec:
+  selector:
+    app: ask-my-data
+  ports:
+    - name: ask-my-data
+      protocol: TCP
+      port: 8050
+      targetPort: selfsvc-http
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: ask-my-data
+spec:
+  host: ask-my-data.$CLUSTER_DOMAIN
+  port:
+    targetPort: ask-my-data
+  to:
+    kind: Service
+    name: ask-my-data
+    weight: 100
+  wildcardPolicy: None

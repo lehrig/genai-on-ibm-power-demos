@@ -1,0 +1,92 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sales-conv-insights-config
+data:
+  app-config-properties: |
+    tabtitle = Sales insights
+    navbartitle = Conversation intelligence on IBM Power10
+    
+    layout = horizontal
+    input_h_rows = 20
+    input_v_rows = 4
+    
+    show_upload = True
+    app_locked = False
+    
+    sample_text = 
+    input_placeholder_text = To get started, type your own, or upload a conversation from a file by clicking the "Upload file" button.
+helper_text = Generated output will be displayed here on click of "Load insights into ERP" button
+    generate_btn_text = Load insights into ERP
+    
+    # Provide actions in sequence. For Custom api call, use action=custom & update customApi.py as per need.
+    generate_btn_actions = llm,llm,llm,llm
+    # Provide title for each output
+    generate_btn_output_labels = Summary, Call to action , Client industry focus , Key entities
+    # Provide payload file name for each action
+    generate_btn_payload_files = summary-payload,classification-payload1,classification-payload2,entity-payload
+    # Provide output type for each action
+    generate_btn_output_type = text,label,label,key-value
+    
+    Input_title=Sales conversation
+    
+    # For LLM call
+    SERVER_URL = http://watsonx-ai-model-adapter.$CLUSTER_DOMAIN/ml/v1-beta/generation/text
+    
+    
+    footer_text=This App is built using watsonx.ai SDK. Please note that this content is made available to foster AI technology adoption. The SDK, watsonx.ai platform and content may include systems & methods pending patent with USPTO and protected under US Patent Laws. Copyright - 2024 IBM Corporation
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sales-conv-insights
+spec:
+  selector:
+    matchLabels:
+      app: sales-conv-insights
+  template:
+    metadata:
+      labels:
+        app: sales-conv-insights
+    spec:
+      volumes:
+      - name: app-config
+        configMap:
+          name: sales-conv-insights-config
+      containers:
+      - name: sales-conv-insights
+        image: quay.io/ibm/ai-on-power-genai-sales-conv-insights:v0.0.1
+        ports:
+        - name: selfsvc-http
+          containerPort: 8050
+        volumeMounts:
+        - name: app-config
+          mountPath: "/home/jovyan/dsce-sample-apps/sales-conv-insights/app-config.properties"
+          subPath: app-config-properties
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sales-conv-insights
+spec:
+  selector:
+    app: sales-conv-insights
+  ports:
+    - name: sales-conv-insights
+      protocol: TCP
+      port: 8050
+      targetPort: selfsvc-http
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: sales-conv-insights
+spec:
+  host: sales-conv-insights.$CLUSTER_DOMAIN
+  port:
+    targetPort: sales-conv-insights
+  to:
+    kind: Service
+    name: sales-conv-insights
+    weight: 100
+  wildcardPolicy: None

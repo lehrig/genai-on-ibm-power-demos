@@ -1,0 +1,92 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pii-extraction-config
+data:
+  app-config-properties: |
+    tabtitle = PII extraction
+    navbartitle = Privacy compliance on IBM Power10
+    
+    layout = horizontal
+    input_h_rows = 20
+    input_v_rows = 4
+    
+    show_upload = True
+    app_locked = False
+    
+    sample_text = 
+    input_placeholder_text = To get started, type your own, or upload a document by clicking the "Upload file" button.
+helper_text = Generated output will be displayed here on click of "Remove PII & load into ERP" button
+    generate_btn_text = Remove PII & load into ERP 
+    
+    # Provide actions in sequence. For Custom api call, use action=custom & update customApi.py as per need.
+    generate_btn_actions = llm
+    # Provide title for each output
+    generate_btn_output_labels = PII entities
+    # Provide payload file name for each action
+    generate_btn_payload_files = entity-payload
+    # Provide output type for each action
+    generate_btn_output_type = key-value
+    
+    Input_title=Document
+    
+    # For LLM call
+    SERVER_URL = http://watsonx-ai-model-adapter.$CLUSTER_DOMAIN/ml/v1-beta/generation/text
+    
+    
+    footer_text=This App is built using watsonx.ai SDK. Please note that this content is made available to foster AI technology adoption. The SDK, watsonx.ai platform and content may include systems & methods pending patent with USPTO and protected under US Patent Laws. Copyright - 2024 IBM Corporation
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pii-extraction
+spec:
+  selector:
+    matchLabels:
+      app: pii-extraction
+  template:
+    metadata:
+      labels:
+        app: pii-extraction
+    spec:
+      volumes:
+      - name: app-config
+        configMap:
+          name: pii-extraction-config
+      containers:
+      - name: pii-extraction
+        image: quay.io/ibm/ai-on-power-genai-pii-extraction:v0.0.1
+        ports:
+        - name: selfsvc-http
+          containerPort: 8050
+        volumeMounts:
+        - name: app-config
+          mountPath: "/home/jovyan/dsce-sample-apps/pii-extraction/app-config.properties"
+          subPath: app-config-properties
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pii-extraction
+spec:
+  selector:
+    app: pii-extraction
+  ports:
+    - name: pii-extraction
+      protocol: TCP
+      port: 8050
+      targetPort: selfsvc-http
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: pii-extraction
+spec:
+  host: pii-extraction.$CLUSTER_DOMAIN
+  port:
+    targetPort: pii-extraction
+  to:
+    kind: Service
+    name: pii-extraction
+    weight: 100
+  wildcardPolicy: None
