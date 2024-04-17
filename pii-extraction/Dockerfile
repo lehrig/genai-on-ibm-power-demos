@@ -85,6 +85,7 @@ RUN mkdir "/home/${NB_USER}/work" && \
     # Power customization
     sed -i 's/<your watsonx instance project_id>/ibm-power-10/g' payload/entity-payload.json && \
     sed -i 's/\/assets\//assets\//g' template.py && \
+    sed -i "s/REQ_URL = SERVER_URL+'\/v1\/generate'/REQ_URL = SERVER_URL/g" template.py && \
     fix-permissions "/home/${NB_USER}"
 
 CMD python3 template.py
