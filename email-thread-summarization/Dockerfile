@@ -68,7 +68,7 @@ RUN mkdir "/home/${NB_USER}/work" && \
         # -> getting latest dash from conda-forge
         'conda-forge::dash' \
         'mamba' \
-        'pandas' \
+        'pandas==2.0.3' \
         'python-dotenv' \
         'requests' \
     && \
@@ -80,12 +80,9 @@ RUN mkdir "/home/${NB_USER}/work" && \
     # Continue with Base...
     rm -rf "/home/${NB_USER}/.cache/yarn" && \
     fix-permissions "${CONDA_DIR}" && \
-    # Create .env file
-    echo "WATSONX_API_KEY=5wy6n8IBRn27vLi1wdmsxFm8krXIm_ywVZqV8MYejYAn" > .env && \
     # Power customization
-    sed -i 's/<your watsonx instance project_id>/ibm-power-10/g' payload/summary-payload.json && \
-    sed -i 's/<your watsonx instance project_id>/ibm-power-10/g' payload/classification-payload1.json && \
     sed -i 's/\/assets\//assets\//g' template.py && \
+    sed -i 's/authenticator.token_manager.get_token()/"5wy6n8IBRn27vLi1wdmsxFm8krXIm_ywVZqV8MYejYAn"/g' template.py && \
     fix-permissions "/home/${NB_USER}"
 
 CMD python3 template.py

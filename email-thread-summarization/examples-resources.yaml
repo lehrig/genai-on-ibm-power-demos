@@ -3,6 +3,10 @@ kind: ConfigMap
 metadata:
   name: email-thread-summarization-config
 data:
+  env: |
+    WATSONX_API_KEY=5wy6n8IBRn27vLi1wdmsxFm8krXIm_ywVZqV8MYejYA
+    SERVER_URL=http://watsonx-ai-model-adapter.$CLUSTER_DOMAIN/ml/v1-beta/generation/text
+    WATSONX_PROJECT_ID=power10
   app-config-properties: |
     tabtitle = Email summarization
     navbartitle = Email thread summarization on IBM Power10
@@ -30,11 +34,7 @@ data:
     
     Input_title=Email thread
     
-    # For LLM call
-    SERVER_URL = http://watsonx-ai-model-adapter.$CLUSTER_DOMAIN/ml/v1-beta/generation/text
-    
-    
-    footer_text=This App is built using watsonx.ai SDK. Please note that this content is made available to foster AI technology adoption. The SDK, watsonx.ai platform and content may include systems & methods pending patent with USPTO and protected under US Patent Laws. Copyright - 2023 IBM Corporation
+    footer_text=Do not input personal data, or data that is sensitive or confidential into demo app. This app is built using the watsonx.ai SDK and may include systems and methods pending patent with the USPTO, protected under US Patent Laws. &#169; Copyright IBM Corporation
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -55,11 +55,14 @@ spec:
           name: email-thread-summarization-config
       containers:
       - name: email-thread-summarization
-        image: quay.io/ibm/ai-on-power-genai-email-thread-summarization:v0.0.1
+        image: quay.io/ibm/ai-on-power-genai-email-thread-summarization:v0.0.2
         ports:
         - name: selfsvc-http
           containerPort: 8050
         volumeMounts:
+        - name: app-config
+          mountPath: "/home/jovyan/dsce-sample-apps/email-thread-summarization/.env"
+          subPath: env
         - name: app-config
           mountPath: "/home/jovyan/dsce-sample-apps/email-thread-summarization/app-config.properties"
           subPath: app-config-properties
