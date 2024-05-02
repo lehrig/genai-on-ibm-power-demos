@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: sales-conv-insights-config
+  name: conversation-intelligence-config
 data:
   env: |
     WATSONX_API_KEY=5wy6n8IBRn27vLi1wdmsxFm8krXIm_ywVZqV8MYejYA
@@ -39,43 +39,43 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: sales-conv-insights
+  name: conversation-intelligence
 spec:
   selector:
     matchLabels:
-      app: sales-conv-insights
+      app: conversation-intelligence
   template:
     metadata:
       labels:
-        app: sales-conv-insights
+        app: conversation-intelligence
     spec:
       volumes:
       - name: app-config
         configMap:
-          name: sales-conv-insights-config
+          name: conversation-intelligence-config
       containers:
-      - name: sales-conv-insights
-        image: quay.io/ibm/ai-on-power-genai-sales-conv-insights:v0.0.2
+      - name: conversation-intelligence
+        image: quay.io/ibm/ai-on-power-genai-conversation-intelligence:v0.0.1
         ports:
         - name: selfsvc-http
           containerPort: 8050
         volumeMounts:
         - name: app-config
-          mountPath: "/home/jovyan/dsce-sample-apps/sales-conv-insights/.env"
+          mountPath: "/home/jovyan/dsce-sample-apps/conversation-intelligence/.env"
           subPath: env
         - name: app-config
-          mountPath: "/home/jovyan/dsce-sample-apps/sales-conv-insights/app-config.properties"
+          mountPath: "/home/jovyan/dsce-sample-apps/conversation-intelligence/app-config.properties"
           subPath: app-config-properties
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: sales-conv-insights
+  name: conversation-intelligence
 spec:
   selector:
-    app: sales-conv-insights
+    app: conversation-intelligence
   ports:
-    - name: sales-conv-insights
+    - name: conversation-intelligence
       protocol: TCP
       port: 8050
       targetPort: selfsvc-http
@@ -83,13 +83,13 @@ spec:
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: sales-conv-insights
+  name: conversation-intelligence
 spec:
-  host: sales-conv-insights.$CLUSTER_DOMAIN
+  host: conversation-intelligence.$CLUSTER_DOMAIN
   port:
-    targetPort: sales-conv-insights
+    targetPort: conversation-intelligence
   to:
     kind: Service
-    name: sales-conv-insights
+    name: conversation-intelligence
     weight: 100
   wildcardPolicy: None

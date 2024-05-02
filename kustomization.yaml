@@ -3,8 +3,8 @@ kind: Kustomization
 
 resources:
 - brief-builder
+- conversation-intelligence
 - email-thread-summarization
-- pii-extraction
-- sales-conv-insights
-- selfservice-cust-assist-qna
+- privacy-compliance
+- selfservice-cust-assistant
 - watsonx-ai-model-adapter

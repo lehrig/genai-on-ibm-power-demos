@@ -1,4 +1,4 @@
-# sales-conv-insights
+# selfservice-cust-assistant
 
 ### Deploy
 ```
@@ -8,8 +8,8 @@ envsubst < examples-resources.yaml | kubectl apply -f -
 
 ### Build image
 ```
-IMAGE=quay.io/ibm/ai-on-power-genai-sales-conv-insights
-LABEL=v0.0.2
+IMAGE=quay.io/ibm/ai-on-power-genai-selfservice-cust-assistant
+LABEL=v0.0.1
 TAG=${IMAGE}:${LABEL}
 
 docker buildx build -f Dockerfile -t ${TAG} --push . 

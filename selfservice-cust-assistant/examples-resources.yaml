@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: selfservice-cust-assist-qn-volume
+  name: selfservice-cust-assistant-volume
 spec:
   accessModes:
   - ReadWriteOnce
@@ -13,7 +13,7 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: selfservice-cust-assist-qn-config
+  name: selfservice-cust-assistant-config
 data:
   env: |
     WATSONX_API_KEY=5wy6n8IBRn27vLi1wdmsxFm8krXIm_ywVZqV8MYejYA
@@ -47,48 +47,48 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: selfservice-cust-assist-qn
+  name: selfservice-cust-assistant
 spec:
   selector:
     matchLabels:
-      app: selfservice-cust-assist-qn
+      app: selfservice-cust-assistant
   template:
     metadata:
       labels:
-        app: selfservice-cust-assist-qn
+        app: selfservice-cust-assistant
     spec:
       volumes:
-      - name: selfservice-cust-assist-qn-vol
+      - name: selfservice-cust-assistant-vol
         persistentVolumeClaim:
-          claimName: selfservice-cust-assist-qn-volume
+          claimName: selfservice-cust-assistant-volume
       - name: app-config
         configMap:
-          name: selfservice-cust-assist-qn-config
+          name: selfservice-cust-assistant-config
       containers:
-      - name: selfservice-cust-assist-qn
-        image: quay.io/ibm/ai-on-power-genai-selfservice-cust-assist-qna:v0.0.5
+      - name: selfservice-cust-assistant
+        image: quay.io/ibm/ai-on-power-genai-selfservice-cust-assistant:v0.0.1
         ports:
         - name: selfsvc-http
           containerPort: 8050
         volumeMounts:
-        - name: selfservice-cust-assist-qn-vol
-          mountPath: "/home/jovyan/dsce-sample-apps/selfservice-cust-assist-qna/documents"
+        - name: selfservice-cust-assistant-vol
+          mountPath: "/home/jovyan/dsce-sample-apps/selfservice-cust-assistant/documents"
         - name: app-config
-          mountPath: "/home/jovyan/dsce-sample-apps/selfservice-cust-assist-qna/.env"
+          mountPath: "/home/jovyan/dsce-sample-apps/selfservice-cust-assistant/.env"
           subPath: env
         - name: app-config
-          mountPath: "/home/jovyan/dsce-sample-apps/selfservice-cust-assist-qna/app-config.properties"
+          mountPath: "/home/jovyan/dsce-sample-apps/selfservice-cust-assistant/app-config.properties"
           subPath: app-config-properties
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: selfservice-cust-assist-qn
+  name: selfservice-cust-assistant
 spec:
   selector:
-    app: selfservice-cust-assist-qn
+    app: selfservice-cust-assistant
   ports:
-    - name: selfservice-cust-assist-qn
+    - name: selfservice-cust-assistant
       protocol: TCP
       port: 8050
       targetPort: selfsvc-http
@@ -96,13 +96,13 @@ spec:
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: selfservice-cust-assist-qn
+  name: selfservice-cust-assistant
 spec:
-  host: selfservice-cust-assist-qn.$CLUSTER_DOMAIN
+  host: selfservice-cust-assistant.$CLUSTER_DOMAIN
   port:
-    targetPort: selfservice-cust-assist-qn
+    targetPort: selfservice-cust-assistant
   to:
     kind: Service
-    name: selfservice-cust-assist-qn
+    name: selfservice-cust-assistant
     weight: 100
   wildcardPolicy: None

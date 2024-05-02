@@ -14,7 +14,7 @@ ENV HOME="/home/${NB_USER}"
 
 ENV DEBUG_MODE="True"
 ENV SERVICE_PORT=8050
-ENV DASH_URL_BASE_PATHNAME="/pii-extraction/"
+ENV DASH_URL_BASE_PATHNAME="/conversation-intelligence/"
 
 # Fix: https://github.com/hadolint/hadolint/wiki/DL4006
 # Fix: https://github.com/koalaman/shellcheck/wiki/SC3014
@@ -75,14 +75,13 @@ RUN mkdir "/home/${NB_USER}/work" && \
     rm ./micromamba && \
     # Install remainder via pip...
     git clone https://github.com/IBM/dsce-sample-apps.git ${HOME}/dsce-sample-apps && \
-    cd "${HOME}"/dsce-sample-apps/pii-extraction && \
+    cd "${HOME}"/dsce-sample-apps/conversation-intelligence && \
     pip3 install -r requirements.txt && \
     # Continue with Base...
     rm -rf "/home/${NB_USER}/.cache/yarn" && \
     fix-permissions "${CONDA_DIR}" && \
     # Power customization
     sed -i 's/\/assets\//assets\//g' template.py && \
-    sed -i "s/REQ_URL = SERVER_URL+'\/v1\/generate'/REQ_URL = SERVER_URL/g" template.py && \
     sed -i 's/authenticator.token_manager.get_token()/"5wy6n8IBRn27vLi1wdmsxFm8krXIm_ywVZqV8MYejYAn"/g' template.py && \
     fix-permissions "/home/${NB_USER}"
 
@@ -91,4 +90,4 @@ CMD python3 template.py
 # Switch back to jovyan to avoid accidental container runs as root
 USER ${NB_UID}
 
-WORKDIR "${HOME}"/dsce-sample-apps/pii-extraction
+WORKDIR "${HOME}"/dsce-sample-apps/conversation-intelligence

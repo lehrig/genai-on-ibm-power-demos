@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: pii-extraction-config
+  name: privacy-compliance-config
 data:
   env: |
     WATSONX_API_KEY=5wy6n8IBRn27vLi1wdmsxFm8krXIm_ywVZqV8MYejYA
@@ -39,43 +39,43 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: pii-extraction
+  name: privacy-compliance
 spec:
   selector:
     matchLabels:
-      app: pii-extraction
+      app: privacy-compliance
   template:
     metadata:
       labels:
-        app: pii-extraction
+        app: privacy-compliance
     spec:
       volumes:
       - name: app-config
         configMap:
-          name: pii-extraction-config
+          name: privacy-compliance-config
       containers:
-      - name: pii-extraction
-        image: quay.io/ibm/ai-on-power-genai-pii-extraction:v0.0.2
+      - name: privacy-compliance
+        image: quay.io/ibm/ai-on-power-genai-privacy-compliance:v0.0.1
         ports:
         - name: selfsvc-http
           containerPort: 8050
         volumeMounts:
         - name: app-config
-          mountPath: "/home/jovyan/dsce-sample-apps/pii-extraction/.env"
+          mountPath: "/home/jovyan/dsce-sample-apps/privacy-compliance/.env"
           subPath: env
         - name: app-config
-          mountPath: "/home/jovyan/dsce-sample-apps/pii-extraction/app-config.properties"
+          mountPath: "/home/jovyan/dsce-sample-apps/privacy-compliance/app-config.properties"
           subPath: app-config-properties
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: pii-extraction
+  name: privacy-compliance
 spec:
   selector:
-    app: pii-extraction
+    app: privacy-compliance
   ports:
-    - name: pii-extraction
+    - name: privacy-compliance
       protocol: TCP
       port: 8050
       targetPort: selfsvc-http
@@ -83,13 +83,13 @@ spec:
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: pii-extraction
+  name: privacy-compliance
 spec:
-  host: pii-extraction.$CLUSTER_DOMAIN
+  host: privacy-compliance.$CLUSTER_DOMAIN
   port:
-    targetPort: pii-extraction
+    targetPort: privacy-compliance
   to:
     kind: Service
-    name: pii-extraction
+    name: privacy-compliance
     weight: 100
   wildcardPolicy: None
