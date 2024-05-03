@@ -24,7 +24,7 @@ export VIRTUAL_CPUS=64
 
 ## Access demos
 Goto:
-- http://brief-builder-demos.$CLUSTER_DOMAIN/brief-builder/
+- http://brief-builder.$CLUSTER_DOMAIN/brief-builder/
 - http://conversation-intelligence.$CLUSTER_DOMAIN/conversation-intelligence/
 - http://email-thread-summarization.$CLUSTER_DOMAIN/email-thread-summarization/
 - http://privacy-compliance.$CLUSTER_DOMAIN/privacy-compliance/
