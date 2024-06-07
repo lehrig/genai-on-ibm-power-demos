@@ -124,8 +124,9 @@ spec:
           mountPath: "/home/jovyan/dsce-sample-apps/brief-builder/.env"
           subPath: env
         - name: app-config
-          mountPath: "/home/jovyan/dsce-sample-apps/brief-buidler/app-config.properties"
+          mountPath: "/home/jovyan/dsce-sample-apps/brief-builder/app-config.properties"
           subPath: app-config-properties
+
 ---
 apiVersion: v1
 kind: Service
